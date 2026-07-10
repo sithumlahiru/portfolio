@@ -120,7 +120,7 @@
     function frame(now: number) {
       const dt = Math.min((now - last) / 1000, 0.05);
       last = now;
-      current += (target - current) * Math.min(1, dt * 3);
+      current += (target - current) * Math.min(1, dt * 6);
       spinner.rotation.y += current * dt;
       renderer.render(scene, camera);
       if (running) rafId = requestAnimationFrame(frame);
