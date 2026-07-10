@@ -8,24 +8,46 @@ const work = (await getCollection("work", ({ data }) => !data.draft)).sort(
 ---
 
 <Base>
-  <main class="mx-auto max-w-3xl px-6 py-24">
-    <section id="top" class="border-b border-[var(--color-line)] pb-16">
-      <p class="font-mono text-sm text-[var(--color-muted)]">Foundation running &#10003;</p>
-      <h1 class="mt-4 text-4xl font-semibold tracking-tight">Sithum Lahiru</h1>
-      <p class="mt-3 max-w-prose text-lg text-[var(--color-muted)]">
-        Product designer. This is the scaffold — real hero, type and palette come next.
+  <main class="mx-auto max-w-5xl px-6 py-16 md:px-10 md:py-20">
+    <header id="top" class="flex items-start justify-between gap-6">
+      <p class="font-mono text-xs uppercase leading-tight tracking-widest text-[var(--color-muted)]">
+        Sithum<br />Lahiru
       </p>
-    </section>
+      <span
+        class="mt-1 block h-3 w-3 shrink-0 rounded-full bg-[var(--color-ink)]"
+        aria-hidden="true"
+      ></span>
+    </header>
 
-    <section id="work" class="py-16">
-      <h2 class="font-mono text-sm uppercase tracking-widest text-[var(--color-muted)]">Selected work</h2>
-      <ul class="mt-6 space-y-4">
+    <h1
+      class="rise mt-12 max-w-[18ch] text-[clamp(2.5rem,7vw,5.5rem)] font-bold leading-[1.03] tracking-[-0.03em]"
+    >
+      Product designer building clear, trustworthy interfaces across SaaS,
+      FinTech, AI &amp; MedTech.
+    </h1>
+
+    <section
+      id="work"
+      class="rise mt-28 border-t border-[var(--color-line)] pt-6"
+      style="animation-delay:0.08s"
+    >
+      <h2 class="font-mono text-xs uppercase tracking-widest text-[var(--color-muted)]">
+        Selected work
+      </h2>
+      <ul class="mt-2">
         {
           work.map((item) => (
             <li>
-              <a href={`/work/${item.id}`} class="group flex items-baseline justify-between gap-4 border-b border-[var(--color-line)] py-4">
-                <span class="text-lg group-hover:text-[var(--color-accent)]">{item.data.title}</span>
-                <span class="shrink-0 font-mono text-sm text-[var(--color-muted)]">{item.data.domain} &#183; {item.data.year}</span>
+              <a
+                href={`/work/${item.id}`}
+                class="group flex flex-col gap-1 border-b border-[var(--color-line)] py-6 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
+              >
+                <span class="text-2xl font-medium tracking-tight underline decoration-transparent decoration-1 underline-offset-[6px] transition-colors duration-200 group-hover:decoration-[var(--color-ink)] md:text-3xl">
+                  {item.data.title}
+                </span>
+                <span class="shrink-0 font-mono text-xs uppercase tracking-wider text-[var(--color-muted)]">
+                  {item.data.client} &#183; {item.data.domain} &#183; {item.data.year}
+                </span>
               </a>
             </li>
           ))
@@ -33,14 +55,57 @@ const work = (await getCollection("work", ({ data }) => !data.draft)).sort(
       </ul>
     </section>
 
-    <section id="about" class="border-t border-[var(--color-line)] py-16">
-      <h2 class="font-mono text-sm uppercase tracking-widest text-[var(--color-muted)]">About</h2>
-      <p class="mt-4 max-w-prose text-[var(--color-muted)]">Placeholder.</p>
+    <section
+      id="about"
+      class="rise mt-28 border-t border-[var(--color-line)] pt-6"
+      style="animation-delay:0.16s"
+    >
+      <h2 class="font-mono text-xs uppercase tracking-widest text-[var(--color-muted)]">
+        About
+      </h2>
+      <p class="mt-6 max-w-2xl text-xl leading-relaxed text-[var(--color-ink)] md:text-2xl">
+        I&rsquo;m a product designer focused on complex, high-stakes software.
+        I work end-to-end &mdash; research, systems, interface &mdash; to make
+        dense products feel calm, legible, and trustworthy. Placeholder bio;
+        replace with your own.
+      </p>
     </section>
 
-    <section id="contact" class="border-t border-[var(--color-line)] py-16">
-      <h2 class="font-mono text-sm uppercase tracking-widest text-[var(--color-muted)]">Contact</h2>
-      <p class="mt-4 max-w-prose text-[var(--color-muted)]">Placeholder.</p>
+    <section
+      id="contact"
+      class="rise mt-28 border-t border-[var(--color-line)] pb-24 pt-6"
+      style="animation-delay:0.24s"
+    >
+      <h2 class="font-mono text-xs uppercase tracking-widest text-[var(--color-muted)]">
+        Get in touch
+      </h2>
+      <ul class="mt-6 flex flex-wrap gap-x-10 gap-y-3 text-xl md:text-2xl">
+        <li>
+          <a
+            class="underline decoration-[var(--color-line)] underline-offset-4 transition-colors hover:decoration-[var(--color-ink)]"
+            href="mailto:sithumlahiru.ux@gmail.com"
+          >
+            Email
+          </a>
+        </li>
+        {/* TODO: replace href="#" with real profile URLs before merge */}
+        <li>
+          <a
+            class="underline decoration-[var(--color-line)] underline-offset-4 transition-colors hover:decoration-[var(--color-ink)]"
+            href="#"
+          >
+            LinkedIn
+          </a>
+        </li>
+        <li>
+          <a
+            class="underline decoration-[var(--color-line)] underline-offset-4 transition-colors hover:decoration-[var(--color-ink)]"
+            href="#"
+          >
+            Dribbble
+          </a>
+        </li>
+      </ul>
     </section>
   </main>
 </Base>
