@@ -39,19 +39,39 @@
   box-shadow: 0 30px 80px -40px rgba(0, 0, 0, 0.5);
 }
 
-/* ---- Editorial — ivory paper, serif display ---- */
-:root[data-theme="editorial"] {
+/* ---- Pixel — dithered bitmap look, hard edges ---- */
+:root[data-theme="pixel"] {
   color-scheme: light;
-  --color-paper: #f5f2ea;
-  --color-ink: #15140e;
-  --color-muted: #726c5b;
-  --color-line: #d9d3c4;
-  --bg: var(--color-paper);
-  --font-display: Georgia, "Times New Roman", Times, serif;
+  --color-paper: #efeee6;
+  --color-ink: #17170f;
+  --color-muted: #56554a;
+  --color-line: #17170f;
+  /* 8x8 Bayer-ish dither tile, scaled 2x for chunky pixels */
+  --bg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Crect width='8' height='8' fill='%23efeee6'/%3E%3Crect x='0' y='0' width='1' height='1' fill='%23cbc9b8'/%3E%3Crect x='4' y='2' width='1' height='1' fill='%23cbc9b8'/%3E%3Crect x='2' y='5' width='1' height='1' fill='%23cbc9b8'/%3E%3Crect x='6' y='6' width='1' height='1' fill='%23cbc9b8'/%3E%3C/svg%3E");
+  --font-display: "Silkscreen", ui-monospace, monospace;
+  --font-mono: "Silkscreen", ui-monospace, monospace;
 }
-:root[data-theme="editorial"] h1 {
-  font-weight: 600;
-  letter-spacing: -0.01em;
+:root[data-theme="pixel"] body {
+  background-size: 16px 16px;
+  image-rendering: pixelated;
+}
+:root[data-theme="pixel"] h1 {
+  /* bitmap faces run wide — pull the size down to keep the measure */
+  font-size: clamp(1.6rem, 4.2vw, 3.4rem);
+  line-height: 1.25;
+  letter-spacing: 0;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+:root[data-theme="pixel"] main section {
+  border-top-width: 2px;
+}
+:root[data-theme="pixel"] main li {
+  border-bottom-width: 2px;
+}
+:root[data-theme="pixel"] ::selection {
+  background: var(--color-ink);
+  color: var(--color-paper);
 }
 
 /* ---- Aurora — near-black with a colourful glow behind the hero ---- */
