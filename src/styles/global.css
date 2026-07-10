@@ -1,0 +1,56 @@
+@import "tailwindcss";
+@import "@fontsource-variable/inter";
+
+/* ------------------------------------------------------------------ *
+ * Design tokens
+ * Placeholder neutral scale — we'll lock the real palette/type next.
+ * Everything downstream reads from these vars, so a reskin = edit here.
+ * ------------------------------------------------------------------ */
+@theme {
+  /* Surfaces & ink */
+  --color-paper: #fbfbfa;
+  --color-ink: #16161a;
+  --color-muted: #6b6b73;
+  --color-line: #e4e3df;
+  --color-accent: #3b3bff; /* placeholder — will change */
+
+  /* Type */
+  --font-display: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", monospace;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+}
+
+/* Visible keyboard focus everywhere */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
