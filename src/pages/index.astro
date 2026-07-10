@@ -1,11 +1,15 @@
 ---
-import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
-import Globe from "../components/Globe.astro";
 
-const work = (await getCollection("work", ({ data }) => !data.draft)).sort(
-  (a, b) => a.data.order - b.data.order,
-);
+const experience = [
+  { company: "Type B Digital", role: "Design Lead", location: "Canada · Remote", period: "2025 — Present" },
+  { company: "Type B Digital", role: "Senior Product Designer", location: "Canada · Remote", period: "2024 — 2025" },
+  { company: "InvoGuide", role: "Product Design Consultant", location: "New Zealand · Remote", period: "2024 — Present" },
+  { company: "MacroActive", role: "Senior Product Designer", location: "New Zealand · Remote", period: "2021 — 2024" },
+  { company: "Digital Yogin", role: "UI/UX Designer", location: "Italy · Remote", period: "2022 — 2023" },
+  { company: "Data2Visual", role: "UI/UX Designer", location: "Germany · Remote", period: "2019 — 2021" },
+  { company: "Ceyentra", role: "UI/UX Design Intern", location: "Sri Lanka · Remote", period: "2018 — 2019" },
+];
 ---
 
 <Base>
@@ -16,41 +20,33 @@ const work = (await getCollection("work", ({ data }) => !data.draft)).sort(
       </p>
     </header>
 
-    <div class="mt-14 grid items-center gap-10 md:mt-20 md:grid-cols-[1.15fr_0.85fr]">
-      <h1
-        class="rise max-w-[16ch] text-[clamp(2.25rem,5vw,4.5rem)] font-bold leading-[1.05] tracking-[-0.03em]"
-      >
-        Product designer &amp; design lead building clear, trustworthy interfaces
-        across SaaS, fintech, health &amp; AI.
-      </h1>
-      <div class="rise" style="animation-delay:0.06s">
-        <Globe />
-      </div>
-    </div>
+    <h1
+      class="rise mt-14 max-w-[16ch] text-[clamp(2.5rem,7vw,5.5rem)] font-bold leading-[1.03] tracking-[-0.03em] md:mt-20"
+    >
+      Product designer &amp; design lead.
+    </h1>
+
+    {/* Case studies hidden for now — content still lives in src/content/work and the /work/[id] pages. */}
 
     <section
-      id="work"
+      id="experience"
       class="rise mt-28 border-t border-[var(--color-line)] pt-6"
       style="animation-delay:0.08s"
     >
       <h2 class="font-mono text-xs uppercase tracking-widest text-[var(--color-muted)]">
-        Selected work
+        Experience
       </h2>
       <ul class="mt-2">
         {
-          work.map((item) => (
-            <li>
-              <a
-                href={`/work/${item.id}`}
-                class="group flex flex-col gap-1 border-b border-[var(--color-line)] py-6 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
-              >
-                <span class="text-2xl font-medium tracking-tight underline decoration-transparent decoration-1 underline-offset-[6px] transition-colors duration-200 group-hover:decoration-[var(--color-ink)] md:text-3xl">
-                  {item.data.title}
-                </span>
-                <span class="shrink-0 font-mono text-xs uppercase tracking-wider text-[var(--color-muted)]">
-                  {item.data.client} &#183; {item.data.domain} &#183; {item.data.year}
-                </span>
-              </a>
+          experience.map((job) => (
+            <li class="flex flex-col gap-1 border-b border-[var(--color-line)] py-6 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
+              <div>
+                <p class="text-xl font-medium tracking-tight md:text-2xl">{job.company}</p>
+                <p class="mt-1 text-[var(--color-muted)]">{job.role}</p>
+              </div>
+              <p class="shrink-0 font-mono text-xs uppercase tracking-wider text-[var(--color-muted)]">
+                {job.location} &#183; {job.period}
+              </p>
             </li>
           ))
         }
