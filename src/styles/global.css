@@ -1,17 +1,16 @@
 @import "tailwindcss";
 
 /* ------------------------------------------------------------------ *
- * Design tokens — warm paper, monochrome, system grotesque.
- * Everything downstream reads from these vars, so a reskin = edit here.
+ * Design tokens — default "paper" theme.
+ * Other themes override these same vars at runtime via [data-theme],
+ * so the markup never changes — only the values do.
  * ------------------------------------------------------------------ */
 @theme {
-  /* Surfaces & ink */
   --color-paper: #f2f1ec;
   --color-ink: #1a1a18;
   --color-muted: #8a877e;
   --color-line: #dcdad2;
 
-  /* Type — system neo-grotesque, no web font loaded */
   --font-display: "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-body: "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", monospace;
@@ -19,8 +18,70 @@
 
 :root {
   color-scheme: light;
+  --bg: var(--color-paper);
 }
 
+/* ---- Glass — deep teal gradient, frosted content panel ---- */
+:root[data-theme="glass"] {
+  color-scheme: dark;
+  --color-ink: #eef7f6;
+  --color-muted: rgba(238, 247, 246, 0.6);
+  --color-line: rgba(255, 255, 255, 0.16);
+  --bg: radial-gradient(130% 120% at 72% 18%, #2f9397 0%, #10606a 52%, #0a3f48 100%);
+}
+:root[data-theme="glass"] main {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 28px;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  margin-block: 2.5rem;
+  box-shadow: 0 30px 80px -40px rgba(0, 0, 0, 0.5);
+}
+
+/* ---- Editorial — ivory paper, serif display ---- */
+:root[data-theme="editorial"] {
+  color-scheme: light;
+  --color-paper: #f5f2ea;
+  --color-ink: #15140e;
+  --color-muted: #726c5b;
+  --color-line: #d9d3c4;
+  --bg: var(--color-paper);
+  --font-display: Georgia, "Times New Roman", Times, serif;
+}
+:root[data-theme="editorial"] h1 {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* ---- Aurora — near-black with a colourful glow behind the hero ---- */
+:root[data-theme="aurora"] {
+  color-scheme: dark;
+  --color-paper: #0c0c11;
+  --color-ink: #edecf2;
+  --color-muted: rgba(237, 236, 242, 0.56);
+  --color-line: rgba(255, 255, 255, 0.1);
+  --bg: #0c0c11;
+}
+:root[data-theme="aurora"] body::before {
+  content: "";
+  position: fixed;
+  inset: -20% -10% auto -10%;
+  height: 72vh;
+  background:
+    radial-gradient(50% 60% at 30% 0%, rgba(120, 118, 240, 0.45), transparent 70%),
+    radial-gradient(45% 55% at 72% 8%, rgba(240, 150, 170, 0.38), transparent 70%),
+    radial-gradient(42% 50% at 52% 0%, rgba(90, 170, 240, 0.35), transparent 70%);
+  filter: blur(28px);
+  pointer-events: none;
+  z-index: 0;
+}
+:root[data-theme="aurora"] main {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---- Base ---- */
 html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
@@ -28,12 +89,18 @@ html {
 }
 
 body {
-  background: var(--color-paper);
+  background: var(--bg);
+  background-attachment: fixed;
   color: var(--color-ink);
   font-family: var(--font-body);
+  transition: background 0.5s ease, color 0.4s ease;
 }
 
-/* Load-in animation — used on hero + sections, disabled under reduced motion */
+h1 {
+  font-family: var(--font-display);
+}
+
+/* Load-in animation — disabled under reduced motion */
 @keyframes rise {
   from {
     opacity: 0;
@@ -62,7 +129,6 @@ body {
   }
 }
 
-/* Visible keyboard focus everywhere */
 :focus-visible {
   outline: 2px solid var(--color-ink);
   outline-offset: 3px;
