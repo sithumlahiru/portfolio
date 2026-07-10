@@ -1,0 +1,161 @@
+---
+// Interactive wireframe globe hero visual (WebGL via three.js).
+// Monochrome — reads the --color-ink design token. Spins slowly, eases to a
+// slower speed on hover, and honors prefers-reduced-motion (renders static).
+---
+
+<div class="globe-wrap mx-auto aspect-square w-full max-w-[420px]">
+  <canvas data-globe class="block h-full w-full"></canvas>
+</div>
+
+<script>
+  import * as THREE from "three";
+
+  const canvas = document.querySelector("[data-globe]");
+  if (canvas instanceof HTMLCanvasElement) {
+    initGlobe(canvas);
+  }
+
+  function initGlobe(canvas: HTMLCanvasElement) {
+    const wrap = canvas.parentElement as HTMLElement;
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    // Pull the ink color straight from the design tokens so the globe stays
+    // in sync with any future reskin.
+    const inkRaw =
+      getComputedStyle(document.documentElement)
+        .getPropertyValue("--color-ink")
+        .trim() || "#1a1a18";
+    const ink = new THREE.Color(inkRaw);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+    camera.position.set(0, 0, 3.1);
+
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      alpha: true,
+      antialias: true,
+    });
+    renderer.setClearAlpha(0);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+
+    const material = new THREE.LineBasicMaterial({
+      color: ink,
+      transparent: true,
+      opacity: 0.26,
+    });
+
+    const spinner = new THREE.Group(); // rotates around its local Y
+    const tilt = new THREE.Group(); // fixed axial tilt
+    tilt.rotation.z = 0.38;
+    tilt.add(spinner);
+    scene.add(tilt);
+
+    const R = 1;
+    const seg = 96;
+
+    // Latitude circles (parallels)
+    const parallels = 12;
+    for (let i = 1; i < parallels; i++) {
+      const lat = (i / parallels) * Math.PI - Math.PI / 2;
+      const r = Math.cos(lat) * R;
+      const y = Math.sin(lat) * R;
+      const pts: THREE.Vector3[] = [];
+      for (let j = 0; j <= seg; j++) {
+        const t = (j / seg) * Math.PI * 2;
+        pts.push(new THREE.Vector3(Math.cos(t) * r, y, Math.sin(t) * r));
+      }
+      spinner.add(
+        new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), material),
+      );
+    }
+
+    // Longitude lines (meridians)
+    const meridians = 18;
+    for (let i = 0; i < meridians; i++) {
+      const lon = (i / meridians) * Math.PI * 2;
+      const pts: THREE.Vector3[] = [];
+      for (let j = 0; j <= seg; j++) {
+        const lat = (j / seg) * Math.PI - Math.PI / 2;
+        const r = Math.cos(lat) * R;
+        const y = Math.sin(lat) * R;
+        pts.push(new THREE.Vector3(Math.cos(lon) * r, y, Math.sin(lon) * r));
+      }
+      spinner.add(
+        new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), material),
+      );
+    }
+
+    function resize() {
+      const w = wrap.clientWidth || 1;
+      const h = wrap.clientHeight || 1;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.render(scene, camera); // keep static/reduced-motion crisp on resize
+    }
+    resize();
+    const ro = new ResizeObserver(resize);
+    ro.observe(wrap);
+
+    const BASE = 0.12; // radians / second at full speed
+    let target = BASE;
+    let current = reduceMotion ? 0 : BASE;
+
+    // Hovering the globe eases the spin down; leaving returns it to full.
+    canvas.addEventListener("pointerenter", () => {
+      target = BASE * 0.35;
+    });
+    canvas.addEventListener("pointerleave", () => {
+      target = BASE;
+    });
+
+    let last = performance.now();
+    let running = false;
+    let rafId = 0;
+
+    function frame(now: number) {
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      current += (target - current) * Math.min(1, dt * 6);
+      spinner.rotation.y += current * dt;
+      renderer.render(scene, camera);
+      if (running) rafId = requestAnimationFrame(frame);
+    }
+
+    function start() {
+      if (running) return;
+      running = true;
+      last = performance.now();
+      rafId = requestAnimationFrame(frame);
+    }
+    function stop() {
+      running = false;
+      cancelAnimationFrame(rafId);
+    }
+
+    renderer.render(scene, camera);
+
+    if (!reduceMotion) {
+      // Only render while the hero is on screen and the tab is visible.
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting && !document.hidden) start();
+            else stop();
+          }
+        },
+        { threshold: 0.05 },
+      );
+      io.observe(canvas);
+
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) stop();
+        else start();
+      });
+    }
+  }
+</script>
