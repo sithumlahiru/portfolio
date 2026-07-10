@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import ThemeToggle from "../components/ThemeToggle.astro";
+import PointerGlow from "../components/PointerGlow.astro";
 
 interface Props {
   title?: string;
@@ -53,5 +54,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   <body>
     <slot />
     <ThemeToggle />
+    <PointerGlow />
   </body>
 </html>
