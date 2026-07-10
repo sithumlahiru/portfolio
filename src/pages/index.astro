@@ -1,6 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
+import Globe from "../components/Globe.astro";
 
 const work = (await getCollection("work", ({ data }) => !data.draft)).sort(
   (a, b) => a.data.order - b.data.order,
@@ -9,22 +10,23 @@ const work = (await getCollection("work", ({ data }) => !data.draft)).sort(
 
 <Base>
   <main class="mx-auto max-w-5xl px-6 py-16 md:px-10 md:py-20">
-    <header id="top" class="flex items-start justify-between gap-6">
+    <header id="top">
       <p class="font-mono text-xs uppercase leading-tight tracking-widest text-[var(--color-muted)]">
         Sithum<br />Lahiru
       </p>
-      <span
-        class="mt-1 block h-3 w-3 shrink-0 rounded-full bg-[var(--color-ink)]"
-        aria-hidden="true"
-      ></span>
     </header>
 
-    <h1
-      class="rise mt-12 max-w-[18ch] text-[clamp(2.5rem,7vw,5.5rem)] font-bold leading-[1.03] tracking-[-0.03em]"
-    >
-      Product designer building clear, trustworthy interfaces across SaaS,
-      FinTech, AI &amp; MedTech.
-    </h1>
+    <div class="mt-14 grid items-center gap-10 md:mt-20 md:grid-cols-[1.15fr_0.85fr]">
+      <h1
+        class="rise max-w-[16ch] text-[clamp(2.25rem,5vw,4.5rem)] font-bold leading-[1.05] tracking-[-0.03em]"
+      >
+        Product designer building clear, trustworthy interfaces across SaaS,
+        FinTech, AI &amp; MedTech.
+      </h1>
+      <div class="rise" style="animation-delay:0.06s">
+        <Globe />
+      </div>
+    </div>
 
     <section
       id="work"
