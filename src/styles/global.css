@@ -19,6 +19,9 @@
 :root {
   color-scheme: light;
   --bg: var(--color-paper);
+  /* Pointer position (updated by PointerGlow, consumed by the Aurora theme) */
+  --mx: 50%;
+  --my: 28%;
 }
 
 /* ---- Glass — deep teal gradient, frosted content panel ---- */
@@ -74,31 +77,59 @@
   color: var(--color-paper);
 }
 
-/* ---- Aurora — near-black with a colourful glow behind the hero ---- */
+/* ---- Aurora — dark, glowing gradients that follow the cursor ---- */
 :root[data-theme="aurora"] {
   color-scheme: dark;
-  --color-paper: #0c0c11;
-  --color-ink: #edecf2;
-  --color-muted: rgba(237, 236, 242, 0.56);
+  --color-paper: #07070d;
+  --color-ink: #f1effb;
+  --color-muted: rgba(241, 239, 251, 0.58);
   --color-line: rgba(255, 255, 255, 0.1);
-  --bg: #0c0c11;
+  --bg: #07070d;
 }
+/* Layer 1 — cursor spotlight + a parallax blob that trails the pointer */
 :root[data-theme="aurora"] body::before {
   content: "";
   position: fixed;
-  inset: -20% -10% auto -10%;
-  height: 72vh;
-  background:
-    radial-gradient(50% 60% at 30% 0%, rgba(120, 118, 240, 0.45), transparent 70%),
-    radial-gradient(45% 55% at 72% 8%, rgba(240, 150, 170, 0.38), transparent 70%),
-    radial-gradient(42% 50% at 52% 0%, rgba(90, 170, 240, 0.35), transparent 70%);
-  filter: blur(28px);
+  inset: 0;
   pointer-events: none;
   z-index: 0;
+  background:
+    radial-gradient(42rem 42rem at var(--mx) var(--my), rgba(126, 108, 255, 0.32), transparent 62%),
+    radial-gradient(
+      26rem 26rem at calc(var(--mx) * 0.55 + 22%) calc(var(--my) * 0.5 + 30%),
+      rgba(255, 108, 180, 0.22),
+      transparent 60%
+    );
+}
+/* Layer 2 — ambient aurora blobs anchored to the page corners */
+:root[data-theme="aurora"] body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(44% 40% at 10% 6%, rgba(76, 130, 255, 0.28), transparent 70%),
+    radial-gradient(42% 42% at 92% 2%, rgba(255, 116, 150, 0.2), transparent 70%),
+    radial-gradient(55% 45% at 70% 108%, rgba(72, 214, 214, 0.16), transparent 70%),
+    radial-gradient(120% 90% at 50% 0%, transparent 55%, rgba(0, 0, 0, 0.55));
 }
 :root[data-theme="aurora"] main {
   position: relative;
   z-index: 1;
+}
+/* Glowing gradient headline */
+:root[data-theme="aurora"] h1 {
+  background: linear-gradient(118deg, #ffffff 0%, #cdc3ff 46%, #ffc4e8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+/* Contact links pick up a soft gradient glow on hover */
+:root[data-theme="aurora"] #contact a:hover {
+  color: #e6c8ff;
+  text-shadow: 0 0 18px rgba(178, 130, 255, 0.55);
+  text-decoration-color: rgba(210, 180, 255, 0.7);
 }
 
 /* ---- Base ---- */

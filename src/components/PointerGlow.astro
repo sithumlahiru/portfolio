@@ -1,0 +1,50 @@
+---
+// Feeds smoothed pointer coordinates into --mx / --my as viewport percentages.
+// The Aurora theme's gradients read these; other themes ignore them.
+// Runs only while the pointer is moving and pauses when the tab is hidden.
+---
+
+<script>
+  const root = document.documentElement;
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const ease = reduce ? 1 : 0.12;
+
+  let tx = 50,
+    ty = 28,
+    cx = 50,
+    cy = 28,
+    running = false;
+
+  function frame() {
+    cx += (tx - cx) * ease;
+    cy += (ty - cy) * ease;
+    root.style.setProperty("--mx", cx.toFixed(2) + "%");
+    root.style.setProperty("--my", cy.toFixed(2) + "%");
+    if (Math.abs(tx - cx) > 0.1 || Math.abs(ty - cy) > 0.1) {
+      requestAnimationFrame(frame);
+    } else {
+      running = false;
+    }
+  }
+
+  function start() {
+    if (!running && !document.hidden) {
+      running = true;
+      requestAnimationFrame(frame);
+    }
+  }
+
+  window.addEventListener(
+    "pointermove",
+    (e) => {
+      tx = (e.clientX / window.innerWidth) * 100;
+      ty = (e.clientY / window.innerHeight) * 100;
+      start();
+    },
+    { passive: true },
+  );
+
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) start();
+  });
+</script>
