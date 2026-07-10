@@ -21,12 +21,21 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Bitmap face for the Pixel theme -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap"
+    />
     <!-- Set the saved theme before first paint to avoid a flash -->
     <script is:inline>
       (function () {
         try {
           var t = localStorage.getItem("theme");
-          if (t) document.documentElement.setAttribute("data-theme", t);
+          var valid = ["paper", "glass", "pixel", "aurora"];
+          if (t && valid.indexOf(t) !== -1)
+            document.documentElement.setAttribute("data-theme", t);
         } catch (e) {}
       })();
     </script>

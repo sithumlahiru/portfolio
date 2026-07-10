@@ -4,7 +4,11 @@
 const themes = [
   { id: "paper", label: "Paper", swatch: "#e9e7df" },
   { id: "glass", label: "Glass", swatch: "linear-gradient(135deg, #2f9397, #0a3f48)" },
-  { id: "editorial", label: "Editorial", swatch: "#efe9db" },
+  {
+    id: "pixel",
+    label: "Pixel",
+    swatch: "repeating-conic-gradient(#17170f 0% 25%, #efeee6 0% 50%) 0 0 / 6px 6px",
+  },
   { id: "aurora", label: "Aurora", swatch: "linear-gradient(135deg, #7876f0, #f096aa 55%, #5aaaf0)" },
 ];
 ---
@@ -78,6 +82,19 @@ const themes = [
       display: none;
     }
   }
+
+  /* Pixel theme: hard edges, no blur, chunky shadow */
+  :global([data-theme="pixel"]) .theme-toggle {
+    border-radius: 0;
+    border-width: 2px;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: var(--color-paper);
+    box-shadow: 4px 4px 0 var(--color-ink);
+  }
+  :global([data-theme="pixel"]) .theme-toggle__swatch {
+    border-radius: 0;
+  }
 </style>
 
 <script>
@@ -106,6 +123,13 @@ const themes = [
     }),
   );
 
-  if (!root.getAttribute("data-theme")) root.setAttribute("data-theme", "paper");
+  // Fall back to paper if the stored theme no longer exists (e.g. "editorial")
+  const valid = btns.map((b) => b.getAttribute("data-theme-btn"));
+  if (!valid.includes(root.getAttribute("data-theme") || "")) {
+    root.setAttribute("data-theme", "paper");
+    try {
+      localStorage.setItem("theme", "paper");
+    } catch (e) {}
+  }
   update();
 </script>
