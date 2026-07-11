@@ -2,13 +2,13 @@
 import Base from "../layouts/Base.astro";
 
 const experience = [
-  { company: "Type B Digital", role: "Design Lead", location: "Canada · Remote", period: "2025 — Present" },
-  { company: "Type B Digital", role: "Senior Product Designer", location: "Canada · Remote", period: "2024 — 2025" },
-  { company: "InvoGuide", role: "Product Design Consultant", location: "New Zealand · Remote", period: "2024 — Present" },
-  { company: "MacroActive", role: "Senior Product Designer", location: "New Zealand · Remote", period: "2021 — 2024" },
-  { company: "Digital Yogin", role: "UI/UX Designer", location: "Italy · Remote", period: "2022 — 2023" },
-  { company: "Data2Visual", role: "UI/UX Designer", location: "Germany · Remote", period: "2019 — 2021" },
-  { company: "Ceyentra", role: "UI/UX Design Intern", location: "Sri Lanka · Remote", period: "2018 — 2019" },
+  { company: "Type B Digital", role: "Design Lead", location: "Canada · Remote", period: "2025 — Present", logo: "/logos/typeb.png" },
+  { company: "Type B Digital", role: "Senior Product Designer", location: "Canada · Remote", period: "2024 — 2025", logo: "/logos/typeb.png" },
+  { company: "InvoGuide", role: "Product Design Consultant", location: "New Zealand · Remote", period: "2024 — Present", logo: null },
+  { company: "MacroActive", role: "Senior Product Designer", location: "New Zealand · Remote", period: "2021 — 2024", logo: "/logos/macroactive.svg" },
+  { company: "Digital Yogin", role: "UI/UX Designer", location: "Italy · Remote", period: "2022 — 2023", logo: "/logos/digitalyogin.svg" },
+  { company: "Data2Visual", role: "UI/UX Designer", location: "Germany · Remote", period: "2019 — 2021", logo: "/logos/data2visual.png" },
+  { company: "Ceyentra", role: "UI/UX Design Intern", location: "Sri Lanka · Remote", period: "2018 — 2019", logo: "/logos/ceyentra.png" },
 ];
 ---
 
@@ -26,6 +26,13 @@ const experience = [
       Product designer &amp; design lead.
     </h1>
 
+    <div class="dash-stats" aria-hidden="true">
+      <div class="dash-stat"><b>8+</b><span>Years</span></div>
+      <div class="dash-stat"><b>6</b><span>Companies</span></div>
+      <div class="dash-stat"><b>5</b><span>Countries</span></div>
+      <div class="dash-stat"><b>0&rarr;1</b><span>Products</span></div>
+    </div>
+
     {/* Case studies hidden for now — content still lives in src/content/work and the /work/[id] pages. */}
 
     <section
@@ -39,12 +46,31 @@ const experience = [
       <ul class="mt-2">
         {
           experience.map((job) => (
-            <li class="flex flex-col gap-1 border-b border-[var(--color-line)] py-6 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
-              <div>
-                <p class="text-xl font-medium tracking-tight md:text-2xl">{job.company}</p>
-                <p class="mt-1 text-[var(--color-muted)]">{job.role}</p>
+            <li class="group flex flex-col gap-3 border-b border-[var(--color-line)] py-6 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+              <div class="flex items-center gap-4">
+                {job.logo ? (
+                  <img
+                    src={job.logo}
+                    alt={`${job.company} logo`}
+                    width="44"
+                    height="44"
+                    loading="lazy"
+                    class="h-11 w-11 shrink-0 rounded-xl object-cover shadow-sm ring-1 ring-black/5 transition-transform duration-300 group-hover:-rotate-3 group-hover:scale-105"
+                  />
+                ) : (
+                  <span
+                    aria-hidden="true"
+                    class="grid h-11 w-11 shrink-0 place-items-center rounded-xl font-mono text-sm uppercase ring-1 ring-[var(--color-line)] transition-transform duration-300 group-hover:-rotate-3 group-hover:scale-105"
+                  >
+                    {job.company.slice(0, 2)}
+                  </span>
+                )}
+                <div>
+                  <p class="text-xl font-medium tracking-tight md:text-2xl">{job.company}</p>
+                  <p class="mt-0.5 text-[var(--color-muted)]">{job.role}</p>
+                </div>
               </div>
-              <p class="shrink-0 font-mono text-xs uppercase tracking-wider text-[var(--color-muted)]">
+              <p class="shrink-0 pl-15 font-mono text-xs uppercase tracking-wider text-[var(--color-muted)] sm:pl-0">
                 {job.location} &#183; {job.period}
               </p>
             </li>
