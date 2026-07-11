@@ -1,7 +1,6 @@
 ---
 import "../styles/global.css";
 import ThemeToggle from "../components/ThemeToggle.astro";
-import PointerGlow from "../components/PointerGlow.astro";
 import DashChrome from "../components/DashChrome.astro";
 
 interface Props {
@@ -56,6 +55,5 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <DashChrome />
     <slot />
     <ThemeToggle />
-    <PointerGlow />
   </body>
 </html>

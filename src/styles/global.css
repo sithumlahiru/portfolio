@@ -19,9 +19,6 @@
 :root {
   color-scheme: light;
   --bg: var(--color-paper);
-  /* Pointer position (updated by PointerGlow, consumed by the Aurora theme) */
-  --mx: 50%;
-  --my: 28%;
 }
 
 /* ---- Glass — teal web-app dashboard (sidebar, top bar, cards, stats) ---- */
@@ -267,7 +264,7 @@
   color: var(--color-paper);
 }
 
-/* ---- Aurora — dark, glowing gradients that follow the cursor ---- */
+/* ---- Aurora — dark, with a slow drifting gradient over the hero only ---- */
 :root[data-theme="aurora"] {
   color-scheme: dark;
   --color-paper: #07070d;
@@ -276,33 +273,41 @@
   --color-line: rgba(255, 255, 255, 0.1);
   --bg: #07070d;
 }
-/* Layer 1 — cursor spotlight + a parallax blob that trails the pointer */
+:root[data-theme="aurora"] body {
+  position: relative;
+}
+/* Hero-only glow: absolutely placed at the top of the page (scrolls away, so
+   the rest of the page stays fully dark) and slowly drifts on its own. */
 :root[data-theme="aurora"] body::before {
   content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 90vh;
   z-index: 0;
+  pointer-events: none;
   background:
-    radial-gradient(42rem 42rem at var(--mx) var(--my), rgba(126, 108, 255, 0.32), transparent 62%),
-    radial-gradient(
-      26rem 26rem at calc(var(--mx) * 0.55 + 22%) calc(var(--my) * 0.5 + 30%),
-      rgba(255, 108, 180, 0.22),
-      transparent 60%
-    );
+    radial-gradient(38% 48% at 22% 26%, rgba(126, 108, 255, 0.45), transparent 62%),
+    radial-gradient(36% 44% at 78% 18%, rgba(255, 108, 180, 0.34), transparent 62%),
+    radial-gradient(46% 50% at 55% 42%, rgba(76, 150, 255, 0.36), transparent 64%),
+    radial-gradient(40% 44% at 40% 66%, rgba(72, 214, 214, 0.26), transparent 64%);
+  background-repeat: no-repeat;
+  background-size: 165% 165%;
+  animation: aurora-drift 26s ease-in-out infinite alternate;
+  -webkit-mask-image: linear-gradient(to bottom, #000 52%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 52%, transparent 100%);
 }
-/* Layer 2 — ambient aurora blobs anchored to the page corners */
-:root[data-theme="aurora"] body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background:
-    radial-gradient(44% 40% at 10% 6%, rgba(76, 130, 255, 0.28), transparent 70%),
-    radial-gradient(42% 42% at 92% 2%, rgba(255, 116, 150, 0.2), transparent 70%),
-    radial-gradient(55% 45% at 70% 108%, rgba(72, 214, 214, 0.16), transparent 70%),
-    radial-gradient(120% 90% at 50% 0%, transparent 55%, rgba(0, 0, 0, 0.55));
+@keyframes aurora-drift {
+  0% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 100% 45%;
+  }
+  100% {
+    background-position: 25% 100%;
+  }
 }
 :root[data-theme="aurora"] main {
   position: relative;
