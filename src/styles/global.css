@@ -28,6 +28,8 @@
   --color-muted: rgba(238, 247, 246, 0.6);
   --color-line: rgba(255, 255, 255, 0.16);
   --bg: radial-gradient(130% 120% at 72% 18%, #2f9397 0%, #10606a 52%, #0a3f48 100%);
+  --font-display: "Manrope", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Manrope", "Helvetica Neue", Arial, sans-serif;
   --dash-sidebar: 216px;
   --dash-topbar: 60px;
   --dash-panel: rgba(255, 255, 255, 0.055);
@@ -272,6 +274,7 @@
   --color-muted: rgba(241, 239, 251, 0.58);
   --color-line: rgba(255, 255, 255, 0.1);
   --bg: #07070d;
+  --font-display: "Anton", "Helvetica Neue", Arial, sans-serif;
 }
 :root[data-theme="aurora"] body {
   position: relative;
@@ -313,12 +316,15 @@
   position: relative;
   z-index: 1;
 }
-/* Glowing gradient headline */
+/* Glowing gradient headline — heavy Anton display */
 :root[data-theme="aurora"] h1 {
   background: linear-gradient(118deg, #ffffff 0%, #cdc3ff 46%, #ffc4e8 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  font-weight: 400; /* Anton ships one weight; avoid faux-bold */
+  letter-spacing: 0.005em;
+  line-height: 1.06;
 }
 /* Contact links pick up a soft gradient glow on hover */
 :root[data-theme="aurora"] #contact a:hover {
