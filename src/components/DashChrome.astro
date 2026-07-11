@@ -1,0 +1,53 @@
+---
+// Web-app dashboard chrome for the Glass theme (sidebar + top bar).
+// Hidden by CSS in every other theme. Nav links scroll to the home sections.
+const nav = [
+  { id: "top", label: "Overview" },
+  { id: "experience", label: "Experience" },
+  { id: "about", label: "About" },
+  { id: "contact", label: "Contact" },
+];
+---
+
+<aside class="dash-sidebar" aria-label="Dashboard navigation">
+  <div class="dash-brand"><span>SL</span>Sithum Lahiru</div>
+  {
+    nav.map((n) => (
+      <a class="dash-nav" href={`/#${n.id}`} data-nav={n.id}>
+        {n.label}
+      </a>
+    ))
+  }
+  <div class="dash-side-foot">Colombo, LK · Remote-first</div>
+</aside>
+
+<header class="dash-topbar">
+  <span class="dash-crumb">Portfolio / Overview</span>
+  <span class="dash-status">Available for work</span>
+</header>
+
+<script>
+  // Scrollspy: mark the nav item for the section currently in view.
+  const links = Array.from(
+    document.querySelectorAll("[data-nav]"),
+  ) as HTMLAnchorElement[];
+  if (links.length) {
+    const byId = new Map(links.map((l) => [l.getAttribute("data-nav"), l]));
+    const sections = links
+      .map((l) => document.getElementById(l.getAttribute("data-nav") || ""))
+      .filter(Boolean) as HTMLElement[];
+
+    const spy = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            links.forEach((l) => l.setAttribute("aria-current", "false"));
+            byId.get(e.target.id)?.setAttribute("aria-current", "true");
+          }
+        }
+      },
+      { rootMargin: "-45% 0px -50% 0px" },
+    );
+    sections.forEach((s) => spy.observe(s));
+  }
+</script>
