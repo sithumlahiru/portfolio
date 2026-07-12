@@ -1,5 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
+import Gallery from "../components/Gallery.astro";
 
 const experience = [
   { company: "Type B Digital", role: "Design Lead", location: "Canada · Remote", period: "2025 — Present", logo: "/logos/typeb.png" },
@@ -36,6 +37,8 @@ const experience = [
       <div class="dash-stat"><b>5</b><span>Countries</span></div>
       <div class="dash-stat"><b>0&rarr;1</b><span>Products</span></div>
     </div>
+
+    <Gallery />
 
     {/* Case studies hidden for now — content still lives in src/content/work and the /work/[id] pages. */}
 

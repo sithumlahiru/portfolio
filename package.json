@@ -10,6 +10,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "gen:images": "node scripts/gen-images.mjs",
+    "gen:slider": "node scripts/gen-slider.mjs",
     "astro": "astro"
   },
   "dependencies": {
