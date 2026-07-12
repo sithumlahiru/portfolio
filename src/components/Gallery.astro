@@ -17,31 +17,25 @@ const slides = [
   class="rise mt-28 border-t border-[var(--color-line)] pt-6"
   style="animation-delay:0.06s"
 >
-  <div class="gal-head">
-    <h2 class="font-mono text-xs uppercase tracking-widest text-[var(--color-muted)]">
-      Selected visuals
-    </h2>
-    <div class="gal-nav">
-      <button type="button" class="gal-arrow" data-gal="prev" aria-label="Previous">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-      </button>
-      <button type="button" class="gal-arrow" data-gal="next" aria-label="Next">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
-      </button>
-    </div>
+  <div class="gal-wrap">
+    <ul class="gal-track" data-gal="track">
+      {
+        slides.map((s, i) => (
+          <li class="gal-item">
+            <button type="button" class="gal-slide" data-gal-open={i} aria-label={`Open ${s.alt} full screen`}>
+              <img src={s.src} alt={s.alt} loading="lazy" draggable="false" />
+            </button>
+          </li>
+        ))
+      }
+    </ul>
+    <button type="button" class="gal-arrow gal-prev" data-gal="prev" aria-label="Previous">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <button type="button" class="gal-arrow gal-next" data-gal="next" aria-label="Next">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
   </div>
-
-  <ul class="gal-track" data-gal="track">
-    {
-      slides.map((s, i) => (
-        <li class="gal-item">
-          <button type="button" class="gal-slide" data-gal-open={i} aria-label={`Open ${s.alt} full screen`}>
-            <img src={s.src} alt={s.alt} loading="lazy" draggable="false" />
-          </button>
-        </li>
-      ))
-    }
-  </ul>
 </section>
 
 <div class="gal-lb" data-gal="lightbox" hidden role="dialog" aria-modal="true" aria-label="Image viewer">
@@ -61,43 +55,59 @@ const slides = [
 </div>
 
 <style>
-  .gal-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
+  .gal-wrap {
+    position: relative;
   }
-  .gal-nav {
-    display: flex;
-    gap: 0.5rem;
-  }
+
+  /* Arrows overlaid on the slider — revealed on hover, desktop pointers only */
   .gal-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
     display: grid;
     place-items: center;
-    width: 2.25rem;
-    height: 2.25rem;
+    width: 2.75rem;
+    height: 2.75rem;
     border: 1px solid var(--color-line);
     border-radius: 999px;
     color: var(--color-ink);
-    background: transparent;
+    background: color-mix(in srgb, var(--color-paper) 82%, transparent);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 8px 24px -10px rgba(0, 0, 0, 0.45);
     cursor: pointer;
-    transition: background 0.2s ease, transform 0.15s ease, opacity 0.2s ease;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.15s ease, background 0.2s ease;
+    z-index: 3;
   }
-  .gal-arrow:hover {
-    background: color-mix(in srgb, var(--color-ink) 8%, transparent);
+  .gal-prev {
+    left: 0.85rem;
+  }
+  .gal-next {
+    right: 0.85rem;
   }
   .gal-arrow:active {
-    transform: scale(0.94);
+    transform: translateY(-50%) scale(0.92);
   }
-  .gal-arrow:disabled {
-    opacity: 0.35;
-    cursor: default;
+
+  @media (hover: hover) and (pointer: fine) {
+    .gal-wrap:hover .gal-arrow:not(:disabled) {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+  /* Touch devices: no arrows, swipe to scroll */
+  @media (hover: none), (pointer: coarse) {
+    .gal-arrow {
+      display: none;
+    }
   }
 
   .gal-track {
     display: flex;
     gap: 1rem;
-    margin: 1.25rem 0 0;
+    margin: 0;
     padding: 0 0 0.25rem;
     list-style: none;
     overflow-x: auto;
