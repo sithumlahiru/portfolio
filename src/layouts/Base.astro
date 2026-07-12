@@ -6,14 +6,59 @@ import DashChrome from "../components/DashChrome.astro";
 interface Props {
   title?: string;
   description?: string;
+  image?: string;
+  noindex?: boolean;
 }
 
 const {
-  title = "Sithum Lahiru — Product Designer",
-  description = "UI/UX design lead working across SaaS, FinTech, AI and MedTech.",
+  title = "Sithum Lahiru — Product Designer & Design Lead",
+  description =
+    "Sithum Lahiru is a product designer and design lead based in Colombo, Sri Lanka — 8+ years designing SaaS, fintech, health, and AI products end-to-end for teams across Canada, New Zealand, and Europe.",
+  image = "/og.png",
+  noindex = false,
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(image, Astro.site);
+const siteUrl = Astro.site?.href ?? "https://www.sithumlahiru.com/";
+
+const person = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Sithum Lahiru",
+  url: siteUrl,
+  image: ogImage.href,
+  jobTitle: "Product Designer & Design Lead",
+  description,
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Colombo",
+    addressCountry: "LK",
+  },
+  sameAs: [
+    "https://www.linkedin.com/in/sithumlahiru",
+    "https://dribbble.com/sithumlahiru",
+  ],
+  knowsAbout: [
+    "Product Design",
+    "UX Design",
+    "UI Design",
+    "Design Systems",
+    "Design Leadership",
+    "SaaS",
+    "FinTech",
+    "Artificial Intelligence",
+    "Health Tech",
+  ],
+  worksFor: { "@type": "Organization", name: "Type B Digital" },
+};
+
+const website = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Sithum Lahiru",
+  url: siteUrl,
+};
 ---
 
 <!doctype html>
@@ -21,14 +66,37 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {
+      noindex ? (
+        <meta name="robots" content="noindex, nofollow" />
+      ) : (
+        <meta
+          name="robots"
+          content="index, follow, max-image-preview:large, max-snippet:-1"
+        />
+      )
+    }
+    <meta name="author" content="Sithum Lahiru" />
+    <meta name="theme-color" content="#f2f1ec" />
+
+    <!-- Icons -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <!-- Bitmap face for the Pixel theme -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Fonts (Manrope for Glass, Anton for Aurora, Silkscreen for Pixel) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;500;600;700;800&family=Silkscreen:wght@400;700&display=swap"
     />
+
     <!-- Set the saved theme before first paint to avoid a flash -->
     <script is:inline>
       (function () {
@@ -40,16 +108,31 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
         } catch (e) {}
       })();
     </script>
-    <title>{title}</title>
-    <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Sithum Lahiru" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage.href} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Sithum Lahiru — product designer & design lead"
+    />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage.href} />
+
+    <!-- Structured data (helps search + answer engines understand the page) -->
+    <script type="application/ld+json" set:html={JSON.stringify(person)} />
+    <script type="application/ld+json" set:html={JSON.stringify(website)} />
   </head>
   <body>
     <DashChrome />
