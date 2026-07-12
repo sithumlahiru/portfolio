@@ -1,0 +1,405 @@
+---
+// Image slider with a full-screen lightbox. Works in all four themes.
+// Swap these for real work later — replace the files in public/slider/ (same
+// names) or edit the paths/captions below.
+const slides = [
+  { src: "/slider/01.svg", alt: "Design work 1" },
+  { src: "/slider/02.svg", alt: "Design work 2" },
+  { src: "/slider/03.svg", alt: "Design work 3" },
+  { src: "/slider/04.svg", alt: "Design work 4" },
+  { src: "/slider/05.svg", alt: "Design work 5" },
+  { src: "/slider/06.svg", alt: "Design work 6" },
+];
+---
+
+<section id="gallery" class="rise mt-20" style="animation-delay:0.06s">
+  <div class="gal-wrap">
+    <ul class="gal-track" data-gal="track" data-count={slides.length}>
+      {
+        [...slides, ...slides].map((s, i) => (
+          <li class="gal-item" aria-hidden={i >= slides.length ? "true" : undefined}>
+            <button
+              type="button"
+              class="gal-slide"
+              data-gal-open={i % slides.length}
+              tabindex={i >= slides.length ? -1 : undefined}
+              aria-label={`Open ${s.alt} full screen`}
+            >
+              <img src={s.src} alt={s.alt} loading="lazy" draggable="false" />
+            </button>
+          </li>
+        ))
+      }
+    </ul>
+    <button type="button" class="gal-arrow gal-prev" data-gal="prev" aria-label="Previous">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <button type="button" class="gal-arrow gal-next" data-gal="next" aria-label="Next">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
+  </div>
+</section>
+
+<div class="gal-lb" data-gal="lightbox" hidden role="dialog" aria-modal="true" aria-label="Image viewer">
+  <button type="button" class="gal-lb-close" data-gal="close" aria-label="Close">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+  <button type="button" class="gal-lb-arrow gal-lb-prev" data-gal="lb-prev" aria-label="Previous">
+    <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <figure class="gal-lb-figure">
+    <img class="gal-lb-img" data-gal="lb-img" alt="" />
+  </figure>
+  <button type="button" class="gal-lb-arrow gal-lb-next" data-gal="lb-next" aria-label="Next">
+    <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+  </button>
+  <div class="gal-lb-counter" data-gal="counter"></div>
+</div>
+
+<style>
+  .gal-wrap {
+    position: relative;
+  }
+
+  /* Arrows overlaid on the slider — revealed on hover, desktop pointers only */
+  .gal-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    color: var(--color-ink);
+    background: color-mix(in srgb, var(--color-paper) 82%, transparent);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 8px 24px -10px rgba(0, 0, 0, 0.45);
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.15s ease, background 0.2s ease;
+    z-index: 3;
+  }
+  .gal-prev {
+    left: 0.85rem;
+  }
+  .gal-next {
+    right: 0.85rem;
+  }
+  .gal-arrow:active {
+    transform: translateY(-50%) scale(0.92);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .gal-wrap:hover .gal-arrow:not(:disabled) {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+  /* Touch devices: no arrows, swipe to scroll */
+  @media (hover: none), (pointer: coarse) {
+    .gal-arrow {
+      display: none;
+    }
+  }
+
+  .gal-track {
+    display: flex;
+    gap: 1rem;
+    margin: 0;
+    padding: 0 0 0.25rem;
+    list-style: none;
+    overflow-x: auto;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+  }
+  .gal-track::-webkit-scrollbar {
+    display: none;
+  }
+  .gal-item {
+    flex: 0 0 82%;
+  }
+  @media (min-width: 640px) {
+    .gal-item {
+      flex-basis: 46%;
+    }
+  }
+  @media (min-width: 1024px) {
+    .gal-item {
+      flex-basis: 31.5%;
+    }
+  }
+
+  .gal-slide {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    padding: 0;
+    border: 1px solid var(--color-line);
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: zoom-in;
+    background: color-mix(in srgb, var(--color-ink) 6%, transparent);
+    transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.3s ease;
+  }
+  .gal-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .gal-slide:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 22px 50px -24px rgba(0, 0, 0, 0.45);
+  }
+  .gal-slide:hover img {
+    transform: scale(1.05);
+  }
+
+  /* ---- Lightbox ---- */
+  .gal-lb {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(1rem, 4vw, 3rem);
+    background: rgba(6, 6, 10, 0.92);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    animation: gal-fade 0.2s ease both;
+  }
+  .gal-lb[hidden] {
+    display: none;
+  }
+  @keyframes gal-fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  .gal-lb-figure {
+    margin: 0;
+    max-width: min(1100px, 92vw);
+    max-height: 88vh;
+  }
+  .gal-lb-img {
+    max-width: 100%;
+    max-height: 88vh;
+    object-fit: contain;
+    border-radius: 10px;
+    box-shadow: 0 40px 120px -30px rgba(0, 0, 0, 0.8);
+    animation: gal-pop 0.25s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  @keyframes gal-pop {
+    from {
+      opacity: 0;
+      transform: scale(0.96);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .gal-lb-close,
+  .gal-lb-arrow {
+    position: fixed;
+    display: grid;
+    place-items: center;
+    color: #f4f4f6;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.15s ease;
+  }
+  .gal-lb-close:hover,
+  .gal-lb-arrow:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+  .gal-lb-close {
+    top: 1.25rem;
+    right: 1.25rem;
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+  .gal-lb-arrow {
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3rem;
+    height: 3rem;
+  }
+  .gal-lb-arrow:hover {
+    transform: translateY(-50%) scale(1.06);
+  }
+  .gal-lb-prev {
+    left: 1.25rem;
+  }
+  .gal-lb-next {
+    right: 1.25rem;
+  }
+  .gal-lb-counter {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: rgba(244, 244, 246, 0.75);
+  }
+
+  /* ---- Pixel theme: hard edges ---- */
+  :global([data-theme="pixel"]) .gal-arrow,
+  :global([data-theme="pixel"]) .gal-slide {
+    border-radius: 0;
+    border-width: 2px;
+  }
+  :global([data-theme="pixel"]) .gal-lb-img {
+    border-radius: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gal-track {
+      scroll-behavior: auto;
+    }
+    .gal-slide,
+    .gal-slide img,
+    .gal-lb-img,
+    .gal-lb {
+      transition: none;
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  const root = document.querySelector('[data-gal="track"]')?.closest("section");
+  const track = document.querySelector('[data-gal="track"]');
+  const lb = document.querySelector('[data-gal="lightbox"]');
+  if (root && track && lb) {
+    const imgs = Array.from(
+      track.querySelectorAll<HTMLImageElement>(".gal-slide img"),
+    );
+    const count = Number(track.dataset.count) || imgs.length;
+    const lbImg = lb.querySelector<HTMLImageElement>('[data-gal="lb-img"]');
+    const counter = lb.querySelector('[data-gal="counter"]');
+    const prevBtn = root.querySelector('[data-gal="prev"]');
+    const nextBtn = root.querySelector('[data-gal="next"]');
+    const wrap = root.querySelector(".gal-wrap");
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let current = 0;
+
+    // --- Manual arrows nudge the track ---
+    function scrollByAmount(dir: number) {
+      const item = track!.querySelector<HTMLElement>(".gal-item");
+      const step = item ? item.getBoundingClientRect().width + 16 : 320;
+      track!.scrollBy({ left: dir * step, behavior: "smooth" });
+    }
+    prevBtn?.addEventListener("click", () => scrollByAmount(-1));
+    nextBtn?.addEventListener("click", () => scrollByAmount(1));
+
+    // --- Continuous right-to-left marquee (seamless via duplicated slides) ---
+    const SPEED = 32; // px per second
+    let pos = 0,
+      lastSet = 0,
+      paused = false,
+      running = false,
+      rafId = 0,
+      last = 0;
+    function frame(now: number) {
+      const dt = Math.min(now - last, 50);
+      last = now;
+      if (!paused) {
+        // If the user swiped/dragged, continue from where they left off.
+        if (Math.abs(track!.scrollLeft - lastSet) > 2) pos = track!.scrollLeft;
+        pos += (SPEED * dt) / 1000;
+        const half = track!.scrollWidth / 2;
+        if (half > 0 && pos >= half) pos -= half;
+        track!.scrollLeft = pos;
+        lastSet = track!.scrollLeft;
+      }
+      if (running) rafId = requestAnimationFrame(frame);
+    }
+    function start() {
+      if (running || reduceMotion || document.hidden) return;
+      running = true;
+      last = performance.now();
+      pos = track!.scrollLeft;
+      rafId = requestAnimationFrame(frame);
+    }
+    function stop() {
+      running = false;
+      cancelAnimationFrame(rafId);
+    }
+    const resume = () => {
+      pos = track!.scrollLeft;
+      paused = false;
+    };
+    // Pause the crawl on hover / drag; fully stop when offscreen or hidden.
+    wrap?.addEventListener("pointerenter", () => (paused = true));
+    wrap?.addEventListener("pointerleave", resume);
+    wrap?.addEventListener("pointerdown", () => (paused = true));
+    window.addEventListener("pointerup", resume);
+    document.addEventListener("visibilitychange", () =>
+      document.hidden ? stop() : start(),
+    );
+    new IntersectionObserver(
+      (entries) => entries.forEach((e) => (e.isIntersecting ? start() : stop())),
+      { threshold: 0.05 },
+    ).observe(track);
+
+    // --- Lightbox ---
+    function show(i: number) {
+      current = (i + count) % count;
+      if (lbImg) {
+        lbImg.src = imgs[current].src;
+        lbImg.alt = imgs[current].alt;
+      }
+      if (counter) counter.textContent = `${current + 1} / ${count}`;
+    }
+    function open(i: number) {
+      paused = true;
+      show(i);
+      lb!.removeAttribute("hidden");
+      document.body.style.overflow = "hidden";
+      (lb!.querySelector('[data-gal="close"]') as HTMLButtonElement)?.focus();
+    }
+    function close() {
+      lb!.setAttribute("hidden", "");
+      document.body.style.overflow = "";
+      resume();
+    }
+
+    track.querySelectorAll<HTMLButtonElement>("[data-gal-open]").forEach((btn) => {
+      btn.addEventListener("click", () =>
+        open(Number(btn.getAttribute("data-gal-open"))),
+      );
+    });
+    lb.querySelector('[data-gal="close"]')?.addEventListener("click", close);
+    lb.querySelector('[data-gal="lb-prev"]')?.addEventListener("click", () =>
+      show(current - 1),
+    );
+    lb.querySelector('[data-gal="lb-next"]')?.addEventListener("click", () =>
+      show(current + 1),
+    );
+    // Click on the backdrop (but not the image or buttons) closes.
+    lb.addEventListener("click", (e) => {
+      if (e.target === lb || (e.target as HTMLElement).tagName === "FIGURE")
+        close();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (lb!.hasAttribute("hidden")) return;
+      if (e.key === "Escape") close();
+      else if (e.key === "ArrowLeft") show(current - 1);
+      else if (e.key === "ArrowRight") show(current + 1);
+    });
+  }
+</script>
