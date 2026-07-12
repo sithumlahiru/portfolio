@@ -14,11 +14,17 @@ const slides = [
 
 <section id="gallery" class="rise mt-20" style="animation-delay:0.06s">
   <div class="gal-wrap">
-    <ul class="gal-track" data-gal="track">
+    <ul class="gal-track" data-gal="track" data-count={slides.length}>
       {
-        slides.map((s, i) => (
-          <li class="gal-item">
-            <button type="button" class="gal-slide" data-gal-open={i} aria-label={`Open ${s.alt} full screen`}>
+        [...slides, ...slides].map((s, i) => (
+          <li class="gal-item" aria-hidden={i >= slides.length ? "true" : undefined}>
+            <button
+              type="button"
+              class="gal-slide"
+              data-gal-open={i % slides.length}
+              tabindex={i >= slides.length ? -1 : undefined}
+              aria-label={`Open ${s.alt} full screen`}
+            >
               <img src={s.src} alt={s.alt} loading="lazy" draggable="false" />
             </button>
           </li>
@@ -107,8 +113,6 @@ const slides = [
     padding: 0 0 0.25rem;
     list-style: none;
     overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
     scrollbar-width: none;
     overscroll-behavior-x: contain;
   }
@@ -117,7 +121,6 @@ const slides = [
   }
   .gal-item {
     flex: 0 0 82%;
-    scroll-snap-align: start;
   }
   @media (min-width: 640px) {
     .gal-item {
@@ -282,76 +285,88 @@ const slides = [
   const track = document.querySelector('[data-gal="track"]');
   const lb = document.querySelector('[data-gal="lightbox"]');
   if (root && track && lb) {
-    const slides = Array.from(
+    const imgs = Array.from(
       track.querySelectorAll<HTMLImageElement>(".gal-slide img"),
     );
-    const total = slides.length;
+    const count = Number(track.dataset.count) || imgs.length;
     const lbImg = lb.querySelector<HTMLImageElement>('[data-gal="lb-img"]');
     const counter = lb.querySelector('[data-gal="counter"]');
     const prevBtn = root.querySelector('[data-gal="prev"]');
     const nextBtn = root.querySelector('[data-gal="next"]');
+    const wrap = root.querySelector(".gal-wrap");
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let current = 0;
 
-    // --- Track arrows ---
+    // --- Manual arrows nudge the track ---
     function scrollByAmount(dir: number) {
       const item = track!.querySelector<HTMLElement>(".gal-item");
       const step = item ? item.getBoundingClientRect().width + 16 : 320;
-      track!.scrollBy({ left: dir * step });
+      track!.scrollBy({ left: dir * step, behavior: "smooth" });
     }
     prevBtn?.addEventListener("click", () => scrollByAmount(-1));
     nextBtn?.addEventListener("click", () => scrollByAmount(1));
 
-    function updateArrows() {
-      const max = track!.scrollWidth - track!.clientWidth - 2;
-      (prevBtn as HTMLButtonElement).disabled = track!.scrollLeft <= 2;
-      (nextBtn as HTMLButtonElement).disabled = track!.scrollLeft >= max;
+    // --- Continuous right-to-left marquee (seamless via duplicated slides) ---
+    const SPEED = 32; // px per second
+    let pos = 0,
+      lastSet = 0,
+      paused = false,
+      running = false,
+      rafId = 0,
+      last = 0;
+    function frame(now: number) {
+      const dt = Math.min(now - last, 50);
+      last = now;
+      if (!paused) {
+        // If the user swiped/dragged, continue from where they left off.
+        if (Math.abs(track!.scrollLeft - lastSet) > 2) pos = track!.scrollLeft;
+        pos += (SPEED * dt) / 1000;
+        const half = track!.scrollWidth / 2;
+        if (half > 0 && pos >= half) pos -= half;
+        track!.scrollLeft = pos;
+        lastSet = track!.scrollLeft;
+      }
+      if (running) rafId = requestAnimationFrame(frame);
     }
-    track.addEventListener("scroll", updateArrows, { passive: true });
-    window.addEventListener("resize", updateArrows);
-    updateArrows();
-
-    // --- Auto-scroll (ping-pong), paused on hover / lightbox / offscreen / hidden ---
-    const wrap = root.querySelector(".gal-wrap");
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let dir = 1;
-    let autoTimer = 0;
-    function autoStep() {
-      const max = track!.scrollWidth - track!.clientWidth - 4;
-      if (dir === 1 && track!.scrollLeft >= max) dir = -1;
-      else if (dir === -1 && track!.scrollLeft <= 4) dir = 1;
-      scrollByAmount(dir);
+    function start() {
+      if (running || reduceMotion || document.hidden) return;
+      running = true;
+      last = performance.now();
+      pos = track!.scrollLeft;
+      rafId = requestAnimationFrame(frame);
     }
-    function startAuto() {
-      if (reduceMotion || autoTimer || total <= 1 || document.hidden) return;
-      if (!lb!.hasAttribute("hidden")) return;
-      autoTimer = window.setInterval(autoStep, 3500);
+    function stop() {
+      running = false;
+      cancelAnimationFrame(rafId);
     }
-    function stopAuto() {
-      clearInterval(autoTimer);
-      autoTimer = 0;
-    }
-    wrap?.addEventListener("pointerenter", stopAuto);
-    wrap?.addEventListener("pointerleave", startAuto);
+    const resume = () => {
+      pos = track!.scrollLeft;
+      paused = false;
+    };
+    // Pause the crawl on hover / drag; fully stop when offscreen or hidden.
+    wrap?.addEventListener("pointerenter", () => (paused = true));
+    wrap?.addEventListener("pointerleave", resume);
+    wrap?.addEventListener("pointerdown", () => (paused = true));
+    window.addEventListener("pointerup", resume);
     document.addEventListener("visibilitychange", () =>
-      document.hidden ? stopAuto() : startAuto(),
+      document.hidden ? stop() : start(),
     );
     new IntersectionObserver(
-      (entries) =>
-        entries.forEach((e) => (e.isIntersecting ? startAuto() : stopAuto())),
-      { threshold: 0.2 },
+      (entries) => entries.forEach((e) => (e.isIntersecting ? start() : stop())),
+      { threshold: 0.05 },
     ).observe(track);
 
     // --- Lightbox ---
     function show(i: number) {
-      current = (i + total) % total;
+      current = (i + count) % count;
       if (lbImg) {
-        lbImg.src = slides[current].src;
-        lbImg.alt = slides[current].alt;
+        lbImg.src = imgs[current].src;
+        lbImg.alt = imgs[current].alt;
       }
-      if (counter) counter.textContent = `${current + 1} / ${total}`;
+      if (counter) counter.textContent = `${current + 1} / ${count}`;
     }
     function open(i: number) {
-      stopAuto();
+      paused = true;
       show(i);
       lb!.removeAttribute("hidden");
       document.body.style.overflow = "hidden";
@@ -360,7 +375,7 @@ const slides = [
     function close() {
       lb!.setAttribute("hidden", "");
       document.body.style.overflow = "";
-      startAuto();
+      resume();
     }
 
     track.querySelectorAll<HTMLButtonElement>("[data-gal-open]").forEach((btn) => {
