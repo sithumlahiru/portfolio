@@ -84,11 +84,9 @@ const website = {
     <meta name="author" content="Sithum Lahiru" />
     <meta name="theme-color" content="#f2f1ec" />
 
-    <!-- Icons -->
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <!-- Icons — use favicon.ico as the site icon (?v=3 busts stale caches) -->
+    <link rel="icon" href="/favicon.ico?v=3" sizes="any" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=3" />
     <link rel="manifest" href="/site.webmanifest" />
 
     <!-- Fonts (Manrope for Glass, Anton for Aurora, Silkscreen for Pixel) -->
