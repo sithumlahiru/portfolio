@@ -21,31 +21,30 @@
   --bg: var(--color-paper);
 }
 
-/* ---- Pixel — vibrant retro halftone, hard edges ---- */
+/* ---- Pixel — high-contrast retro, hard edges, electric accent ---- */
 :root[data-theme="pixel"] {
   color-scheme: light;
-  --color-paper: #ffe234;
-  --color-ink: #181206;
-  --color-muted: #5c4700;
-  --color-line: #181206;
-  --pixel-accent: #e60073;
-  /* halftone dither tile: vivid yellow base + hot-pink dots */
-  --bg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Crect width='8' height='8' fill='%23ffe234'/%3E%3Crect x='0' y='0' width='1' height='1' fill='%23e60073'/%3E%3Crect x='4' y='2' width='1' height='1' fill='%23e60073'/%3E%3Crect x='2' y='5' width='1' height='1' fill='%23e60073'/%3E%3Crect x='6' y='6' width='1' height='1' fill='%23e60073'/%3E%3C/svg%3E");
+  --color-paper: #f4f2ea;
+  --color-ink: #14130d; /* ~16:1 on paper */
+  --color-muted: #4f4c44; /* ~8:1 on paper */
+  --color-line: #14130d;
+  --pixel-accent: #2b1fff; /* electric indigo, ~10:1 on paper */
+  --bg: var(--color-paper);
   --font-display: "Pixelify Sans", "Silkscreen", ui-monospace, monospace;
   --font-mono: "Silkscreen", ui-monospace, monospace;
 }
-:root[data-theme="pixel"] body {
-  background-size: 14px 14px;
-  image-rendering: pixelated;
-}
+/* Bold uppercase titles in the vivid accent */
 :root[data-theme="pixel"] h1 {
   font-size: clamp(2.4rem, 6.5vw, 5rem);
   line-height: 1.02;
   letter-spacing: 0;
   font-weight: 700;
   text-transform: uppercase;
+  color: var(--pixel-accent);
 }
-/* Bold, uppercase titles */
+:root[data-theme="pixel"] main h2 {
+  color: var(--pixel-accent);
+}
 :root[data-theme="pixel"] #experience .font-medium {
   text-transform: uppercase;
   letter-spacing: 0.01em;
@@ -91,15 +90,16 @@
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(38% 48% at 22% 26%, rgba(126, 108, 255, 0.45), transparent 62%),
-    radial-gradient(36% 44% at 78% 18%, rgba(255, 108, 180, 0.34), transparent 62%),
-    radial-gradient(46% 50% at 55% 42%, rgba(76, 150, 255, 0.36), transparent 64%),
-    radial-gradient(40% 44% at 40% 66%, rgba(72, 214, 214, 0.26), transparent 64%);
+    radial-gradient(42% 52% at 20% 24%, rgba(140, 88, 255, 0.62), transparent 62%),
+    radial-gradient(40% 48% at 80% 15%, rgba(255, 64, 170, 0.52), transparent 62%),
+    radial-gradient(50% 54% at 55% 42%, rgba(48, 128, 255, 0.52), transparent 64%),
+    radial-gradient(44% 48% at 36% 66%, rgba(36, 224, 210, 0.4), transparent 64%);
   background-repeat: no-repeat;
-  background-size: 165% 165%;
+  background-size: 170% 170%;
+  filter: saturate(135%);
   animation: aurora-drift 26s ease-in-out infinite alternate;
-  -webkit-mask-image: linear-gradient(to bottom, #000 52%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 52%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 58%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 58%, transparent 100%);
 }
 @keyframes aurora-drift {
   0% {
@@ -116,15 +116,20 @@
   position: relative;
   z-index: 1;
 }
-/* Glowing gradient headline — heavy Anton display */
+/* Glowing gradient headline — heavy Anton display, bold uppercase */
 :root[data-theme="aurora"] h1 {
-  background: linear-gradient(118deg, #ffffff 0%, #cdc3ff 46%, #ffc4e8 100%);
+  background: linear-gradient(115deg, #ffffff 0%, #b9a4ff 40%, #ff8fd6 72%, #7fe6ff 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   font-weight: 400; /* Anton ships one weight; avoid faux-bold */
-  letter-spacing: 0.005em;
-  line-height: 1.06;
+  letter-spacing: 0.01em;
+  line-height: 1.04;
+  text-transform: uppercase;
+}
+:root[data-theme="aurora"] #experience .font-medium {
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
 }
 /* Contact links pick up a soft gradient glow on hover */
 :root[data-theme="aurora"] #contact a:hover {
