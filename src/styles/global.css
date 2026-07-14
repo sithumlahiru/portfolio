@@ -21,29 +21,34 @@
   --bg: var(--color-paper);
 }
 
-/* ---- Pixel — dithered bitmap look, hard edges ---- */
+/* ---- Pixel — vibrant retro halftone, hard edges ---- */
 :root[data-theme="pixel"] {
   color-scheme: light;
-  --color-paper: #efeee6;
-  --color-ink: #17170f;
-  --color-muted: #56554a;
-  --color-line: #17170f;
-  /* 8x8 Bayer-ish dither tile, scaled 2x for chunky pixels */
-  --bg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Crect width='8' height='8' fill='%23efeee6'/%3E%3Crect x='0' y='0' width='1' height='1' fill='%23cbc9b8'/%3E%3Crect x='4' y='2' width='1' height='1' fill='%23cbc9b8'/%3E%3Crect x='2' y='5' width='1' height='1' fill='%23cbc9b8'/%3E%3Crect x='6' y='6' width='1' height='1' fill='%23cbc9b8'/%3E%3C/svg%3E");
-  --font-display: "Silkscreen", ui-monospace, monospace;
+  --color-paper: #ffe234;
+  --color-ink: #181206;
+  --color-muted: #5c4700;
+  --color-line: #181206;
+  --pixel-accent: #e60073;
+  /* halftone dither tile: vivid yellow base + hot-pink dots */
+  --bg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Crect width='8' height='8' fill='%23ffe234'/%3E%3Crect x='0' y='0' width='1' height='1' fill='%23e60073'/%3E%3Crect x='4' y='2' width='1' height='1' fill='%23e60073'/%3E%3Crect x='2' y='5' width='1' height='1' fill='%23e60073'/%3E%3Crect x='6' y='6' width='1' height='1' fill='%23e60073'/%3E%3C/svg%3E");
+  --font-display: "Pixelify Sans", "Silkscreen", ui-monospace, monospace;
   --font-mono: "Silkscreen", ui-monospace, monospace;
 }
 :root[data-theme="pixel"] body {
-  background-size: 16px 16px;
+  background-size: 14px 14px;
   image-rendering: pixelated;
 }
 :root[data-theme="pixel"] h1 {
-  /* bitmap faces run wide — pull the size down to keep the measure */
-  font-size: clamp(1.6rem, 4.2vw, 3.4rem);
-  line-height: 1.25;
+  font-size: clamp(2.4rem, 6.5vw, 5rem);
+  line-height: 1.02;
   letter-spacing: 0;
   font-weight: 700;
   text-transform: uppercase;
+}
+/* Bold, uppercase titles */
+:root[data-theme="pixel"] #experience .font-medium {
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
 }
 :root[data-theme="pixel"] main section {
   border-top-width: 2px;
@@ -51,9 +56,14 @@
 :root[data-theme="pixel"] main li {
   border-bottom-width: 2px;
 }
+:root[data-theme="pixel"] .resume-btn {
+  border-radius: 0;
+  border-width: 2px;
+  box-shadow: 3px 3px 0 var(--color-ink);
+}
 :root[data-theme="pixel"] ::selection {
-  background: var(--color-ink);
-  color: var(--color-paper);
+  background: var(--pixel-accent);
+  color: #fff;
 }
 
 /* ---- Aurora — dark, with a slow drifting gradient over the hero only ---- */
