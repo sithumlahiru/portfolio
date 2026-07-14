@@ -63,12 +63,6 @@ const slides = [
     max-width: 100vw;
     margin-left: calc(50% - 50vw);
   }
-  /* In the Glass dashboard the gallery stays inside its content card */
-  :global([data-theme="glass"]) #gallery {
-    width: auto;
-    max-width: none;
-    margin-left: 0;
-  }
 
   .gal-wrap {
     position: relative;
@@ -128,9 +122,6 @@ const slides = [
     overflow-x: auto;
     scrollbar-width: none;
     overscroll-behavior-x: contain;
-  }
-  :global([data-theme="glass"]) .gal-track {
-    padding-inline: 0;
   }
   .gal-track::-webkit-scrollbar {
     display: none;

@@ -1,7 +1,6 @@
 ---
 import "../styles/global.css";
 import ThemeToggle from "../components/ThemeToggle.astro";
-import DashChrome from "../components/DashChrome.astro";
 
 interface Props {
   title?: string;
@@ -87,12 +86,12 @@ const website = {
     <!-- Icons — single favicon.ico (?v=4 busts stale caches) -->
     <link rel="icon" href="/favicon.ico?v=4" sizes="any" />
 
-    <!-- Fonts (Manrope for Glass, Anton for Aurora, Silkscreen for Pixel) -->
+    <!-- Fonts (Anton for Aurora, Silkscreen for Pixel) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;500;600;700;800&family=Silkscreen:wght@400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Silkscreen:wght@400;700&display=swap"
     />
 
     <!-- Set the saved theme before first paint to avoid a flash -->
@@ -100,7 +99,7 @@ const website = {
       (function () {
         try {
           var t = localStorage.getItem("theme");
-          var valid = ["paper", "glass", "pixel", "aurora"];
+          var valid = ["paper", "pixel", "aurora"];
           if (t && valid.indexOf(t) !== -1)
             document.documentElement.setAttribute("data-theme", t);
         } catch (e) {}
@@ -133,7 +132,6 @@ const website = {
     <script type="application/ld+json" set:html={JSON.stringify(website)} />
   </head>
   <body>
-    <DashChrome />
     <slot />
     <ThemeToggle />
   </body>
