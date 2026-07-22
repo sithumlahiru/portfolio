@@ -30,7 +30,7 @@
   --color-line: #14130d;
   --pixel-accent: #2b1fff; /* electric indigo, ~10:1 on paper */
   --bg: var(--color-paper);
-  --font-display: "Pixelify Sans", "Silkscreen", ui-monospace, monospace;
+  --font-display: "Geist Pixel", "Silkscreen", ui-monospace, monospace;
   --font-mono: "Silkscreen", ui-monospace, monospace;
 }
 /* Bold uppercase titles in the vivid accent */
