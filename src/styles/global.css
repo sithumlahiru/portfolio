@@ -138,6 +138,21 @@
   text-decoration-color: rgba(210, 180, 255, 0.7);
 }
 
+/* ---- Typewriter ---- */
+/* Both phrases are stacked in one grid cell; the hidden copies hold the
+   tallest phrase's height so the description below never shifts. */
+.tw-stack {
+  display: grid;
+}
+.tw-stack > * {
+  grid-area: 1 / 1;
+}
+.tw-sizer {
+  visibility: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+
 /* ---- Typewriter caret — a blinking circle at the end of the hero title ---- */
 .tw-caret {
   display: inline-block;

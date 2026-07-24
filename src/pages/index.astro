@@ -31,6 +31,83 @@ const experience = [
     >
       Product designer &amp; design lead.
     </h1>
+    <script is:inline>
+      // Runs during parse (before first paint) so the static title never
+      // flashes ahead of the greeting. Two hidden "sizer" copies reserve the
+      // tallest phrase via CSS grid, so nothing below ever shifts.
+      (function () {
+        var el = document.querySelector("[data-typewriter]");
+        if (!el) return;
+
+        var finalText = (el.textContent || "").trim().replace(/\s+/g, " ");
+        var intro = "Hey welcome, it’s Sithum Lahiru.";
+        el.setAttribute("aria-label", finalText);
+
+        if (
+          window.matchMedia &&
+          window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        )
+          return; // keep the static title, no animation
+
+        function sizer(t) {
+          var s = document.createElement("span");
+          s.className = "tw-sizer";
+          s.setAttribute("aria-hidden", "true");
+          s.textContent = t;
+          return s;
+        }
+
+        el.classList.add("tw-stack");
+        el.textContent = "";
+        var live = document.createElement("span");
+        var text = document.createElement("span");
+        var caret = document.createElement("span");
+        caret.className = "tw-caret";
+        caret.setAttribute("aria-hidden", "true");
+        live.appendChild(text);
+        live.appendChild(caret);
+        el.appendChild(sizer(intro));
+        el.appendChild(sizer(finalText));
+        el.appendChild(live);
+
+        var running = false;
+        var run = 0;
+        function wait(ms) {
+          return new Promise(function (r) {
+            setTimeout(r, ms);
+          });
+        }
+        async function render(str, from, to, speed, token) {
+          var dir = to >= from ? 1 : -1;
+          for (var i = from; dir > 0 ? i <= to : i >= to; i += dir) {
+            if (token !== run) return false;
+            text.textContent = str.slice(0, i);
+            await wait(speed);
+          }
+          return true;
+        }
+        async function play() {
+          if (running) return;
+          running = true;
+          var token = ++run;
+          try {
+            if (!(await render(intro, 0, intro.length, 42, token))) return;
+            await wait(900);
+            if (token !== run) return;
+            if (!(await render(intro, intro.length, 0, 22, token))) return;
+            await wait(250);
+            if (token !== run) return;
+            await render(finalText, 0, finalText.length, 42, token);
+          } finally {
+            if (token === run) running = false;
+          }
+        }
+        el.addEventListener("pointerenter", function () {
+          if (!running) play();
+        });
+        setTimeout(play, 300);
+      })();
+    </script>
 
     <p
       class="rise mt-6 max-w-[46ch] text-lg leading-relaxed text-[var(--color-muted)] md:text-xl"
@@ -168,82 +245,3 @@ const experience = [
     </section>
   </main>
 </Base>
-
-<script>
-  // ChatGPT-style typing for the hero title: types a greeting, deletes it, then
-  // types the real title. The real title ships in the HTML (so crawlers see it)
-  // and is mirrored into aria-label before animating. Hover replays it.
-  const el = document.querySelector("[data-typewriter]") as HTMLElement | null;
-  if (el) {
-    const finalText = (el.textContent || "").trim().replace(/\s+/g, " ");
-    const intro = "Hey welcome, it’s Sithum Lahiru.";
-    el.setAttribute("aria-label", finalText);
-
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    const text = document.createElement("span");
-    const caret = document.createElement("span");
-    caret.className = "tw-caret";
-    caret.setAttribute("aria-hidden", "true");
-    el.textContent = "";
-    el.append(text, caret);
-
-    if (reduce) {
-      text.textContent = finalText;
-    } else {
-      // Reserve the tallest of the two phrases so nothing below ever jumps.
-      text.textContent = finalText;
-      const hFinal = el.getBoundingClientRect().height;
-      text.textContent = intro;
-      const hIntro = el.getBoundingClientRect().height;
-      text.textContent = "";
-      el.style.minHeight = `${Math.max(hFinal, hIntro)}px`;
-
-      const wait = (ms: number) =>
-        new Promise((resolve) => window.setTimeout(resolve, ms));
-
-      let running = false;
-      let run = 0;
-
-      const render = async (
-        str: string,
-        from: number,
-        to: number,
-        speed: number,
-        token: number,
-      ) => {
-        const dir = to >= from ? 1 : -1;
-        for (let i = from; dir > 0 ? i <= to : i >= to; i += dir) {
-          if (token !== run) return false;
-          text.textContent = str.slice(0, i);
-          await wait(speed);
-        }
-        return true;
-      };
-
-      const play = async () => {
-        if (running) return;
-        running = true;
-        const token = ++run;
-        try {
-          if (!(await render(intro, 0, intro.length, 42, token))) return;
-          await wait(900);
-          if (token !== run) return;
-          if (!(await render(intro, intro.length, 0, 22, token))) return;
-          await wait(250);
-          if (token !== run) return;
-          await render(finalText, 0, finalText.length, 42, token);
-        } finally {
-          if (token === run) running = false;
-        }
-      };
-
-      // Replay from the top when the finished title is hovered.
-      el.addEventListener("pointerenter", () => {
-        if (!running) play();
-      });
-
-      window.setTimeout(play, 300);
-    }
-  }
-</script>
