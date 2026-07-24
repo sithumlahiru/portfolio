@@ -138,6 +138,40 @@
   text-decoration-color: rgba(210, 180, 255, 0.7);
 }
 
+/* ---- Typewriter caret — a blinking circle at the end of the hero title ---- */
+.tw-caret {
+  display: inline-block;
+  width: 0.4em;
+  height: 0.4em;
+  border-radius: 50%;
+  margin-left: 0.16em;
+  vertical-align: baseline;
+  background: var(--color-ink);
+  animation: tw-blink 1.05s steps(1, end) infinite;
+}
+:root[data-theme="pixel"] .tw-caret {
+  background: var(--pixel-accent);
+}
+/* Aurora's h1 is gradient-clipped text, so give the caret its own solid tint */
+:root[data-theme="aurora"] .tw-caret {
+  background: #ffc4e8;
+}
+@keyframes tw-blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tw-caret {
+    animation: none;
+  }
+}
+
 /* ---- Base ---- */
 html {
   scroll-behavior: smooth;

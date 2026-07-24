@@ -26,6 +26,7 @@ const experience = [
     </header>
 
     <h1
+      data-typewriter
       class="rise mt-14 max-w-[16ch] text-[clamp(2.5rem,7vw,5.5rem)] font-bold leading-[1.03] tracking-[-0.03em] md:mt-20"
     >
       Product designer &amp; design lead.
@@ -167,3 +168,41 @@ const experience = [
     </section>
   </main>
 </Base>
+
+<script>
+  // ChatGPT-style typing for the hero title. The full text ships in the HTML
+  // (so crawlers see it) and is mirrored into aria-label before animating.
+  const el = document.querySelector("[data-typewriter]") as HTMLElement | null;
+  if (el) {
+    const full = (el.textContent || "").trim().replace(/\s+/g, " ");
+    el.setAttribute("aria-label", full);
+
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const finalHeight = el.getBoundingClientRect().height;
+
+    const text = document.createElement("span");
+    const caret = document.createElement("span");
+    caret.className = "tw-caret";
+    caret.setAttribute("aria-hidden", "true");
+    el.textContent = "";
+    el.append(text, caret);
+
+    if (reduce) {
+      text.textContent = full;
+    } else {
+      // Reserve the final height so the page below doesn't jump while typing.
+      el.style.minHeight = `${finalHeight}px`;
+      let i = 0;
+      const step = () => {
+        text.textContent = full.slice(0, i);
+        if (i <= full.length) {
+          i += 1;
+          window.setTimeout(step, 38);
+        } else {
+          el.style.minHeight = "";
+        }
+      };
+      window.setTimeout(step, 300);
+    }
+  }
+</script>
