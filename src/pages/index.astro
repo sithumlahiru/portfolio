@@ -26,10 +26,88 @@ const experience = [
     </header>
 
     <h1
+      data-typewriter
       class="rise mt-14 max-w-[16ch] text-[clamp(2.5rem,7vw,5.5rem)] font-bold leading-[1.03] tracking-[-0.03em] md:mt-20"
     >
       Product designer &amp; design lead.
     </h1>
+    <script is:inline>
+      // Runs during parse (before first paint) so the static title never
+      // flashes ahead of the greeting. Two hidden "sizer" copies reserve the
+      // tallest phrase via CSS grid, so nothing below ever shifts.
+      (function () {
+        var el = document.querySelector("[data-typewriter]");
+        if (!el) return;
+
+        var finalText = (el.textContent || "").trim().replace(/\s+/g, " ");
+        var intro = "Hey welcome, it’s Sithum Lahiru.";
+        el.setAttribute("aria-label", finalText);
+
+        if (
+          window.matchMedia &&
+          window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        )
+          return; // keep the static title, no animation
+
+        function sizer(t) {
+          var s = document.createElement("span");
+          s.className = "tw-sizer";
+          s.setAttribute("aria-hidden", "true");
+          s.textContent = t;
+          return s;
+        }
+
+        el.classList.add("tw-stack");
+        el.textContent = "";
+        var live = document.createElement("span");
+        var text = document.createElement("span");
+        var caret = document.createElement("span");
+        caret.className = "tw-caret";
+        caret.setAttribute("aria-hidden", "true");
+        live.appendChild(text);
+        live.appendChild(caret);
+        el.appendChild(sizer(intro));
+        el.appendChild(sizer(finalText));
+        el.appendChild(live);
+
+        var running = false;
+        var run = 0;
+        function wait(ms) {
+          return new Promise(function (r) {
+            setTimeout(r, ms);
+          });
+        }
+        async function render(str, from, to, speed, token) {
+          var dir = to >= from ? 1 : -1;
+          for (var i = from; dir > 0 ? i <= to : i >= to; i += dir) {
+            if (token !== run) return false;
+            text.textContent = str.slice(0, i);
+            await wait(speed);
+          }
+          return true;
+        }
+        async function play() {
+          if (running) return;
+          running = true;
+          var token = ++run;
+          try {
+            if (!(await render(intro, 0, intro.length, 42, token))) return;
+            await wait(900);
+            if (token !== run) return;
+            if (!(await render(intro, intro.length, 0, 22, token))) return;
+            await wait(250);
+            if (token !== run) return;
+            await render(finalText, 0, finalText.length, 42, token);
+          } finally {
+            if (token === run) running = false;
+          }
+        }
+        el.addEventListener("pointerenter", function () {
+          if (!running) play();
+        });
+        setTimeout(play, 300);
+      })();
+    </script>
 
     <p
       class="rise mt-6 max-w-[46ch] text-lg leading-relaxed text-[var(--color-muted)] md:text-xl"
