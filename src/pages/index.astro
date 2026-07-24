@@ -170,15 +170,16 @@ const experience = [
 </Base>
 
 <script>
-  // ChatGPT-style typing for the hero title. The full text ships in the HTML
-  // (so crawlers see it) and is mirrored into aria-label before animating.
+  // ChatGPT-style typing for the hero title: types a greeting, deletes it, then
+  // types the real title. The real title ships in the HTML (so crawlers see it)
+  // and is mirrored into aria-label before animating. Hover replays it.
   const el = document.querySelector("[data-typewriter]") as HTMLElement | null;
   if (el) {
-    const full = (el.textContent || "").trim().replace(/\s+/g, " ");
-    el.setAttribute("aria-label", full);
+    const finalText = (el.textContent || "").trim().replace(/\s+/g, " ");
+    const intro = "Hey welcome, it’s Sithum Lahiru.";
+    el.setAttribute("aria-label", finalText);
 
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const finalHeight = el.getBoundingClientRect().height;
 
     const text = document.createElement("span");
     const caret = document.createElement("span");
@@ -188,21 +189,61 @@ const experience = [
     el.append(text, caret);
 
     if (reduce) {
-      text.textContent = full;
+      text.textContent = finalText;
     } else {
-      // Reserve the final height so the page below doesn't jump while typing.
-      el.style.minHeight = `${finalHeight}px`;
-      let i = 0;
-      const step = () => {
-        text.textContent = full.slice(0, i);
-        if (i <= full.length) {
-          i += 1;
-          window.setTimeout(step, 38);
-        } else {
-          el.style.minHeight = "";
+      // Reserve the tallest of the two phrases so nothing below ever jumps.
+      text.textContent = finalText;
+      const hFinal = el.getBoundingClientRect().height;
+      text.textContent = intro;
+      const hIntro = el.getBoundingClientRect().height;
+      text.textContent = "";
+      el.style.minHeight = `${Math.max(hFinal, hIntro)}px`;
+
+      const wait = (ms: number) =>
+        new Promise((resolve) => window.setTimeout(resolve, ms));
+
+      let running = false;
+      let run = 0;
+
+      const render = async (
+        str: string,
+        from: number,
+        to: number,
+        speed: number,
+        token: number,
+      ) => {
+        const dir = to >= from ? 1 : -1;
+        for (let i = from; dir > 0 ? i <= to : i >= to; i += dir) {
+          if (token !== run) return false;
+          text.textContent = str.slice(0, i);
+          await wait(speed);
+        }
+        return true;
+      };
+
+      const play = async () => {
+        if (running) return;
+        running = true;
+        const token = ++run;
+        try {
+          if (!(await render(intro, 0, intro.length, 42, token))) return;
+          await wait(900);
+          if (token !== run) return;
+          if (!(await render(intro, intro.length, 0, 22, token))) return;
+          await wait(250);
+          if (token !== run) return;
+          await render(finalText, 0, finalText.length, 42, token);
+        } finally {
+          if (token === run) running = false;
         }
       };
-      window.setTimeout(step, 300);
+
+      // Replay from the top when the finished title is hovered.
+      el.addEventListener("pointerenter", () => {
+        if (!running) play();
+      });
+
+      window.setTimeout(play, 300);
     }
   }
 </script>
